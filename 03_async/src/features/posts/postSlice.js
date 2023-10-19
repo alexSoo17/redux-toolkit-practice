@@ -1,0 +1,111 @@
+import { createAsyncThunk, createSlice, nanoid } from "@reduxjs/toolkit";
+import formatDate from "../../utils.js/date";
+import axios from "axios";
+
+const initialState = {
+  posts: [],
+  status: "idle", // 'idle' | 'loading' | 'succeeded' | 'failed'
+  error: null,
+};
+
+const POST_URL = "https://jsonplaceholder.typicode.com/posts";
+
+export const fetchPosts = createAsyncThunk("posts/fetchPosts", async () => {
+  const res = await axios.get(POST_URL);
+  const data = res.data.slice(0, 20);
+  return data;
+});
+
+export const createNewPost = createAsyncThunk(
+  "posts/addPost",
+  async (initPost) => {
+    const res = await axios.post(POST_URL, initPost);
+    return res.data;
+  }
+);
+const postSlice = createSlice({
+  name: "posts",
+  initialState,
+  reducers: {
+    addPost: {
+      reducer(state, action) {
+        state.posts.push(action.payload);
+      },
+      prepare(title, content, userId) {
+        return {
+          payload: {
+            id: nanoid(),
+            title,
+            content,
+            userId,
+            date: formatDate(new Date()),
+            reactions: {
+              thumbsUp: 0,
+              wow: 0,
+              heart: 0,
+              rocket: 0,
+              coffee: 0,
+            },
+          },
+        };
+      },
+    },
+    addReaction: {
+      reducer(state, action) {
+        const { postId, reaction } = action.payload;
+        const isExistPost = state.posts.find((post) => post.id === postId);
+        if (isExistPost) {
+          isExistPost.reactions[reaction]++;
+        }
+      },
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchPosts.pending, (state, action) => {
+        state.status = "loading";
+      })
+      .addCase(fetchPosts.fulfilled, (state, action) => {
+        state.status = "succeeded";
+
+        const loadedPosts = action.payload.map((post) => {
+          post.date = formatDate(new Date());
+          post.reactions = {
+            thumbsUp: 0,
+            wow: 0,
+            heart: 0,
+            rocket: 0,
+            coffee: 0,
+          };
+          return post;
+        });
+
+        state.posts = state.posts.concat(loadedPosts);
+      })
+      .addCase(fetchPosts.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.error.message;
+      })
+      .addCase(createNewPost.fulfilled, (state, action) => {
+        action.payload.id = state.posts[state.posts.length - 1].id + 1;
+        action.payload.userId = Number(action.payload.userId);
+        action.payload.date = formatDate(new Date());
+        action.payload.reactions = {
+          thumbsUp: 0,
+          wow: 0,
+          heart: 0,
+          rocket: 0,
+          coffee: 0,
+        };
+        state.posts.push(action.payload);
+      });
+  },
+});
+
+export const allPosts = (state) => state.posts.posts;
+export const getPostsStatus = (state) => state.posts.status;
+export const getPostsError = (state) => state.posts.error;
+
+export const { addPost, addReaction } = postSlice.actions;
+
+export default postSlice.reducer;

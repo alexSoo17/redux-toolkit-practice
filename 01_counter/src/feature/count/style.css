@@ -1,0 +1,50 @@
+.btn {
+  width: 60px;
+  height: 60px;
+  background-color: rgb(228, 227, 225);
+  border: none;
+  border-radius: 10px;
+  font-size: 36px;
+  box-shadow: 3px 5px 10px 3px rgba(130, 124, 130, 0.8);
+  cursor: pointer;
+}
+
+.btn:active {
+  transform: scale(0.95);
+}
+
+.text-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+  align-items: center;
+}
+
+input {
+  width: 200px;
+  height: 40px;
+  border-radius: 3px;
+  border: 2px solid #ccc;
+  font-size: 16px;
+}
+
+.text-btn {
+  width: 120px;
+  height: 30px;
+  background-color: rgb(228, 227, 225);
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.text-btn:active {
+  transform: scale(0.95);
+}
+.btn-group {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}

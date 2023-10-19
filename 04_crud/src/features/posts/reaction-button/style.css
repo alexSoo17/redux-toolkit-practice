@@ -1,0 +1,8 @@
+.reactionButton {
+  margin: 0 0.5em 0.5em 0;
+  background: transparent;
+  border: none;
+  color: rgb(80, 78, 78);
+  font-size: 1rem;
+  cursor: pointer;
+}
