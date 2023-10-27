@@ -15,3 +15,7 @@ change the local state to async thunk
 ## 04_crud
 
 complete CRUD blog project
+
+## 05_fullstack
+
+add backend using fastapi
